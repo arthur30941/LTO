@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta charset="UTF-8">
+	<link rel="stylesheet" href="css/jquery.mobile-1.2.0.min.css" />
+	<script src="js/jquery-1.8.2.min.js"></script>
+	<script src="js/jquery.mobile-1.2.0.min.js"></script>  
+	<script src="http://maps.googleapis.com/maps/api/js"></script>
+	<script>
+	function initialize() {
+	var mapProp = {
+    center:new google.maps.LatLng(14.839882, 120.278956),
+    zoom:5,
+    mapTypeId:google.maps.MapTypeId.ROADMAP
+	};
+	var map=new google.maps.Map(document.getElementById("googleMap"),mapProp);
+	
+	var marker=new google.maps.Marker({
+	position:new google.maps.LatLng(14.839882, 120.278956),
+	animation:google.maps.Animation.BOUNCE
+	});
+
+	marker.setMap(map);
+	}
+	google.maps.event.addDomListener(window, 'load', initialize);
+	</script>
+	<script>
+	<!--Exam Questionaire-->
+	var pos = 0, test, test_status, question, choice, choices, chA, chB, chC, correct = 0;
+	var questions = [
+		[ "1. Habang nagmamaneho, dapat kang tumingin sa side and rear view mirror ng:", "Mabilis / madalian", "Hanggang gusto mo", "Hindi kukulangin sa minute", "A" ],
+		[ "2. Maaari kang lumusot (overtake) sa kanang bahagi ng sasakyan kung:", "Ang highway ay may dalawa o higit pang linya patungo sa isang direksyon", "Ang kalsada ay salubungang-daan (two-way)", "Malapad ang bangketa", "A" ],
+		[ "3. Ang mahuhuling lasing sa alak o ipinagbabawal na gamut ay may parusang:", "Php 2000.00", "Pagkabilanggo ng anim na buwan", "Isang buwan pagsuspinde ng lisensya", "C" ],
+		[ "4. Bago umalis sa paradahan, dapat mong:", "Suriin ang paligid bago magpatakbo", "Bumusina", "Magpatakbo agad", "A" ],
+		[ "5. Ang tamang gulang sa pagkuha ng lisensya Non-Professional ay:","18 taong gulang", "16 taong gulang", "17 taong gulang", "A"],
+		[ "6. Matapos kang lumampas (overtake) at nais mong bumalik sa pinanggalingang linya ng ligtas, kailangan:","Tingnan sa ‘rear view mirror’ ang iyong nilagpasan", "Lumingon sa iyong nilagpasan", "Huminto", "A"],
+		[ "7. Sa isang interseksyon na may STOP sign, dapat kang:","Magmarahan at magpatuloy kung walang panganib", "Huminto at magpatuloy kung walang panganib", "Magbigay daan sa mga sasakyan mula sa kanan o kaliwa at magpatuloy kung walang panganib", "B"],
+		[ "8. Ang pagkakaroon ng lisensya ay isang:","Karangalan", "Pribilehiyo", "Karapatan", "C"],
+		[ "9.  Ang lisensyang Non-Professional ay para lamang sa:","Mga pribadong sasakyan", "Pampaseherong sasakyan", "Anumang uri ng sasakyan", "A"],
+		[ "10. Ano ang dapat mong ihanda kung malayo ang biyahe?","Maghanda ng kagamitang pangkumpuni ng sasakyan kung masisiraan", "Planuhin ang ruta at ikondisyon ang sasakyan", "Tama lahat ang nasa itaas", "C"],
+		[ "11. Kung paparada ng paahon sa may bangketa, dapat mong ipihit ang gulong:","Papuntang bangketa", "Papalayo sa bangketa", "Kahit anong direksyon", "B"],
+		[ "12. Ang sasakyan ay nakaparada (parked) kung:","Nakatigil ng matagal at nagsasakay ng pasahero", "Nakatigil ng matagal at nagbababa ng pasahero", "Nakatigil ng matagal at patay ang makina", "C"],
+		[ "13. Ano ang kahulugan ng patay-sinding kulay pulang ilaw trapiko?","Maghintay ng berdeng ilaw", "Bagalan ang takbo at tumuloy ng maingat", "Huminto at magpatuloy kung ligtas", "C"],
+		[ "14. Anong dapat gawin bago lumiko sa kanan o kaliwa?","Biglang lumiko at bumusina", "Magbigay ng hudyat o senyas na hindi kukulangin sa 30 meters", "Ipagwalang-bahala ang hudyat", "B"],
+		[ "15. Sa paglipat-lipat ng linya, dapat sumenyas, tingnan ang rear view mirror at:","Tingnan kung may parating na sasakyan", "Bumusina", "Sindihan ang headlight", "A"],
+		[ "16. Sa may highway na may dalawang guhit, maaari kang lumusot (overtake) kung sa iyong panig ay may:","Tuloy-tuloy na puting guhit", "Putol-putol na dilaw na guhit", "Tuloy-tuloy na dilaw na guhit", "A"],
+		[ "17. Ang hindi pagsunod sa ilaw trapiko ay:","Nagpapatunay na mahusay kang drayber", "Maaaring masangkot sa iyo ang aksidente", "Nakatipid sa gasolina", "B"],
+		[ "18. Mapanganib ang palikong kaliwa kaysa sa kanan sapagkat:","Mabilis ang sasakyang galing sa kaliwa", "Kailangang maging listo sa mga sasakyang nagmumula sa kaliwa o kanan", "Maraming linya ang kalsada", "A"],
+		[ "19. Ang pinakaligtas sa ultimatum kahit ikaw ang may karapatan sa daan ay:","Huwag ipilit ang karapatan", "Bumusina", "Laging ipilit ang karapatan", "A"],
+		[ "20. Sa mga rotonda, alin ang may karapatan sa daan?","Ang sasakyang papasok pa lamang sa rotonda", "Ang sasakyang nasa paligid ng rotonda", "Ang sasakyang nakaharap sa berdeng ilaw", "B"],
+		[ "21. Hindi dapat lumusot (overtake) sa paanan ng tulay sapagkat:","May tumatawid", "Hindi nakikita ang kasalubong na sasakyan", "Makipot ang daan", "B"],
+		[ "22. Ano ang kahulugan ng patay-sinding dilaw na ilaw trapiko?","Magmarahan at magpatuloy kung walang panganib", "Huminto at hintayin magbago ang ilaw", "Hintaying ang berdeng ilaw", "A"],
+		[ "23. Ano ang kahulugan ng tuloy-tuloy na guhit na kulay dilaw?","Maaaring lumusot (overtake)", "Bawal lumusot", "Tama lahat ang sagot", "B"],
+		[ "24. Ayon sa batas, hindi ka maaaring, magmaneho ng matulin maliban kung:","Walang panganib", "Naaayon sa takdang bilis o tulin", "Tama lahat ang sagot", "B"],
+		[ "25. Ang isang may lisensya ay maaaring magmaneho nang:","Kahit anong uri ng sasakyan", "Sasakyang nakasaad sa lisensya", "Pampasaherong sasakyan lamang", "B"],
+		[ "26. Kung ang nakasalubong mo ay may nakakasilaw na ilaw, ano ang dapat mong gawin?","Silawin din ang nakasalubong", "Tumingin ng bahagya sa gawing kanan ng kalsada", "Titigan ang nakakasilaw na ilaw", "B"],
+		[ "27. Kung parating ka sa isang kurbada, ano ang dapat mong gawin?","Magmarahan/bagalan ang takbo bago dumating sa kurbada", "Bilisan ang takbo habang nasa kurbada", "Magpreno ng bigla habang tumatakbo sa kurbada", "A"],
+		[ "28. Ano ang kahulugan ng senyas trapikong kulay pula na tatsulok ang hugis","Nagtatakda", "Nagbibigay babala", "Nagbibigay impormasyon", "B"],
+		[ "29. Ano ang kahulugan ng senyas trapiko na kulay asul at puti na parihaba o parisukat ang hugis?","Nag-uutos ng direksyon", "Nagbibigay babala", "Nagbibigay impormasyon", "A"],
+		[ "30. Ano ang kahulugan ng senyas trapiko na kulay pula na pabilog, octagon o baliktad na tatsulok?","Nagtatakda o nagbabawal", "Nagbibigay babala", "Nag-uutos ng direksyon", "A"],
+		[ "31. Ano ang kahulugan ng berdeng ilaw trapiko?","Senyas upang patakbuhin ang sasakyan", "Huminto sa nakatakdang linya", "Maaari kang tumuloy bagalan lang ang takbo", "A"],
+		[ "32. Ano ang kahulugan ng patay-sinding ilaw na pulang ilaw trapiko?","Huminto sa nakatakdang linya", "Huminto sandali at ituloy ang pagpapatakbo kung walang sagabal sa daan", "Bilisan ang pagtakbo", "B"],
+		[ "33. Ano ang kahulugan ng dilaw na signal ng trapiko?","Huminto", "Humanda  sa paghinto at malapit ng sumindi ang ilaw na pula", "Maaari kang tumuloy, bagalan lamang ang pagtakbo", "B"],
+		[ "34. Ano ang kahulugan ng berdeng signal ng trapiko?","Patakbuhin ng tuloy-tuloy ang sasakyan", "Huminto", "Bagalan ang pagtakbo", "A"],
+		[ "35. Ano ang ibig sabihin ng berdeng arrow signal trapiko?","Hindi pinapayagan ang pagpasok sa interseksyon na itinuturo ng arrow", "Nagpapahintulot sa mga sasakyan na kumaliwa at kumanan", "Nagpapahintulot sa pagtawid ng mga taong tatawid", "B"],
+		[ "36. Ano ang kahulugan ng dilaw na arrow signal trapiko?","Naghuhudyat ng pakanan o pakaliwang direksyon", "Nangangahulugan na ang pulang ‘arrow’ ay malapit ng sumindi", "Nagpapahintulot sa mga sasakyan na kumanan, kumaliwa o dumiretso", "A"],
+		[ "37. Mga puting linya sa daan:","Naghahati sa mga ‘lanes’ na tumatakbo sa isang direksyon", "Naghihiwalay sa trapiko na tumakbo sa isang direksyon", "Palatandaan na maaaring lumusot ng pakanan o pakaliwa", "A"],
+		[ "38. Ang dilaw na linyang putol-putol ay palatandaan na:","Pinapayagan ang paglusot sa kanan", "Ipinagbabawal ang paglusot sa kanan o kaliwa", "Pinapayagan ang paglusot sa kaliwa", "B"],
+		[ "39. Ang puting linyang putol-putol ay palatandaan na:","Maaaring lumusot sa pakaliwa o pakanan kung walang peligro", "Ipinagbabawal ang paglusot sa kaliwa", "Ipinagbabawal ang paglusot sa kanan", "A"],
+		[ "40. Kailan dapat magdesisyon ang isang drayber?","Kung buhol-buhol na ang trapiko", "Kung mahusay syang magmaneho", "Habang siya ay nagmamaneho", "C"],
+		[ "41. Ang dalawang dilaw na linya na tuloy-tuloy ay palatandaan na:","Maaaring lumusot pakanan", "Peligroso ang lumusot sa pakaliwa", "Maaaring lumusot pakaliwa", "B"],
+		[ "42. Kung ang drayber ng sasakyan na nasa unahan mo ay naglabas ng kaliwang kamay at inunat ito, nakatitiyak ka na siya ay:","Kakaliwa", "Kakanan", "Hihinto", "A"],
+		[ "43. Kailangan magbigay ng senyas kung kakanan o kakaliwa sa darating na interseksyon sa layong:","15 m", "60 m", "30 m", "C"],
+		[ "44. Kung gusto mong magpalit ng lane sa highways, kailangan magsignal:","Sampung segundo bago gawin ito", "Limang minuto bago gawin ito", "Isang minute bago gawin ito", "A"],
+		[ "45. Sa naka-motorsiklo na may balak lumiko pakanan, dapat gamitin na senyas ay:","Kaliwang kamay na nakataas", "Kanang kamay na diretsong nagtuturo pakanan", "Kanang kamay na nakataas", "B"],
+		[ "46. Ang kailangang distansya sa pagitan ng sinusundang sasakyan ay:","Sinlaki ng sukat ng dalawang sasakyan", "Sinlaki ng sukat ng isang sasakyan", "Sinlaki ng sukat ng tatlong sasakyan", "B"],
+		[ "47. Saang lugar hindi ka dapat lumusot (overtake)?","Tama lahat ang sagot", "Sa mga sangandaan o interseksyon", "Sa paanan ng tulay", "A"],
+		[ "48. Ang paggamit ng huwad na lisensya ay ipinagbabawal at may parusang:","Php 500.00 at anim na buwan na hindi makakakuha ng lisensya", "Pagkakabilanggo ng hindi hihigit sa anim na buwan", "Php 100.00", "A"],
+		[ "49. Ano ang dapat gawin kung pinapahinto ng pulis?","Huminto at ibigay ang lisensya at ibang papeles ng sasakyan kung hinihingi", "Huwag pansinin ang pulis at bilisan ang pagtakbo", "Huminto at makipagtalo sa pulis", "A"],
+		[ "50. Ang dalawang dilaw na linya na putol-putol ay palatandaan na:","Ipinagbabawal ang paglusot sa kaliwa", "Maaaring lumusot ng pakanan o pakaliwa kung walang peligro", "Ipinagbabawal ang paglusot sa kanan", "B"]
+	];
+	function _(x) {
+		return document.getElementById(x);
+		}
+		
+		<!--loads and display how many correct answer-->
+	function renderQuestion() { 
+		test = _("test");
+		if(pos >= questions.length) {
+			if(correct < 35){
+				document.getElementById("status").innerHTML = "<h2>You got "+correct+" of "+questions.length+" questions correct</h2><br> <h3>Sorry! you failed...</h3>";
+				window.location = "#page4";
+			}
+			else
+			{
+				document.getElementById("status").innerHTML = "<h2>You got "+correct+" of "+questions.length+" questions correct</h2><br> <h3>Congratulation! you passed...</h3>";
+				window.location = "#page4";
+			}
+			
+			pos = 0;
+			correct = 0;
+			return false;
+			}
+		_("test_status").innerHTML = "Question "+(pos+1)+" of "+questions.length;
+		question = questions[pos][0];
+		chA = questions[pos][1];
+		chB = questions[pos][2];
+		chC = questions[pos][3];
+		test.innerHTML = "<h3 align='center'>"+question+"</h3>";
+		test.innerHTML += "<input type='radio' name='choices' value='A'> "+chA+"<br>";
+		test.innerHTML += "<input type='radio' name='choices' value='B'> "+chB+"<br>";
+		test.innerHTML += "<input type='radio' name='choices' value='C'> "+chC+"<br><br>";
+		}
+		
+		<!--Codes that check the correct answer-->
+	function checkAnswer(){
+		choices = document.getElementsByName("choices");
+		for(var i=0; i<choices.length; i++) { 
+			if(choices[i].checked) {
+				choice = choices[i].value;
+				}
+		}
+		if(choice == questions[pos][4]) {
+			correct++;
+		}   
+		pos++;
+		renderQuestion(); 
+		}
+		window.addEventListener("load", renderQuestion, false);
+		
+		<!--Countdown timer at home page-->
+		function countdown(secs) {
+			if (secs == 5) {
+				clearTimeout(timer);
+				window.location = "#home";
+			}
+			secs--;
+			var timer = setTimeout('countdown('+secs+')', 1000);
+			}
+			window.addEventListener("load", countdown(10), false);
+		
+</script>
+</head>
+<body>
+<div data-role="page" align="center">
+	<br><br>
+	<img src="images/LTO.gif" />
+</div>
+
+	<!--Home page-->
+<div data-role="page" data-theme="c" id="home" align="center">
+	<div data-role="header" data-theme="b">
+		<img src="images/home.png"  />
+		
+	</div>
+	<div data-role="content">
+	<br>
+			<a href="#page1" data-transition="flip" style="text-decoration:none"><button>START EXAM</button></a>
+			<br>
+			<a href="#page2" data-transition="flip" style="text-decoration:none"><button>LTO BRANCHES</button></a>
+			<br>
+			<a href="#page3" data-transition="flip" style="text-decoration:none"><button>ABOUT</button></a>
+	</div>
+</div>
+
+	<!--Branches of LTO where you can see the map-->
+<div data-role="page" data-theme="a" id="page2">
+	<div data-role="content">
+			<div id="googleMap" style="width:300px;height:380px;"></div>
+			<h3>LTO Main Office, Upper Kalaklan, Olongapo City</h3>
+	</div>
+	<div data-role="footer" data-position="fixed">
+		<div data-role="navbar">
+			<ul>
+				<li><a href="#home" data-transition="flip">HOME</a>
+			</ul>
+		</div>
+	</div>
+</div>
+
+	<!--this is the page while taking the exam-->
+<div data-role="page" data-theme="a" id="page1">
+	<div data-role="content">
+			<h1 id="test_status"></h1>
+			<div id="test"></div>
+			<button onclick="checkAnswer() ">ENTER</button>
+	</div>
+	<div data-role="footer" data-position="fixed">
+		<div data-role="navbar">
+			<ul>
+				<li><a href="#home" data-transition="flip">HOME</a>
+			</ul>
+		</div>
+	</div>
+</div>
+
+	<!--About the developer-->
+<div data-role="page" data-theme="a" id="page3">
+	<div data-role="header" data-theme="e">
+	</div>
+	<div data-role="content">
+			<h1>ABOUT</h1>
+			<h4>&nbsp&nbsp&nbsp&nbsp&nbsp&nbspA mobile examination reviewer and nearest LTO office in Olongapo City.</h4>
+			<br>
+			<h3>Developed by:<br>&nbsp&nbsp&nbsp&nbsp&nbsp&nbspJohn Arthur C. Elamparo</h3>
+			<br>
+			<h4>Data source:<br>&nbsp&nbsp&nbsp&nbsp&nbsp&nbspLTO Exam Reviewer Questionaire sample LTO License Philippines</h4>
+	</div>
+	<div data-role="footer" data-position="fixed">
+		<div data-role="navbar">
+			<ul>
+				<li><a href="#home" data-transition="flip">HOME</a>
+			</ul>
+		</div>
+	</div>
+</div>
+
+	<!--The results of the exam-->
+<div data-role="page" data-theme="a" id="page4">
+	<div data-role="header" data-theme="e">
+	</div>
+	<div data-role="content">
+			<h1>RESULT</h1>
+			<div id="status"></div>
+		<!--Twitter API-->	
+		<h4>Follow @LTOPhilippines on Twitter</h4>
+		<a class="twitter-follow-button"
+		href="https://twitter.com/LTOPhilippines"
+		data-show-count="false"
+		data-lang="en">
+		Follow @twitterapi
+		</a>
+		<script>window.twttr=(function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],t=window.twttr||{};if(d.getElementById(id))return;js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);t._e=[];t.ready=function(f){t._e.push(f);};return t;}(document,"script","twitter-wjs"));</script>
+		</section>
+			<!--facebook API-->
+			<h1 id="status" style="text-align:"center"> </h1>
+	<center><iframe src="http://www.facebook.com/plugins/like.php?href=https://www.facebook.com/pages/LTO-Exam-Reviewer/344578659075521?skip_nax_wizard=true&ref_type=bookmark;
+	width=500&amp;layout=standard&amp;action=like&amp;show_faces=false&amp;share=true&amp;height=30"
+	scrolling="no"
+	frameborder="0"
+	allowTransparency="true"></center>
+	
+	</iframe>
+	
+			</div>
+	<div data-role="footer" data-position="fixed">
+		<div data-role="navbar">
+			<ul>
+				<li><a href="#home" data-transition="flip">HOME</a></li>
+				<li><a href="#answer" data-transition="flip">VIEW ANSWERS</a></li>
+			</ul>
+		</div>
+	</div>
+</div>
+
+	<!--these are the correct answer-->
+<div data-role="page" data-theme="a" id="answer">
+	<div data-role="header" data-theme="e">
+	</div>
+	<div data-role="content">
+			<h1>Answers</h1>
+			<h4><br>1. Habang nagmamaneho, dapat kang tumingin sa side and rear view mirror ng: Mabilis / madalian. <br><br>
+		2. Maaari kang lumusot (overtake) sa kanang bahagi ng sasakyan kung: Ang highway ay may dalawa o higit pang linya patungo sa isang direksyon. <br><br>
+		3. Ang mahuhuling lasing sa alak o ipinagbabawal na gamut ay may parusang: Pagkabilanggo ng anim na buwan. <br><br>
+		4. Bago umalis sa paradahan, dapat mong: Suriin ang paligid bago magpatakbo.<br><br>
+		5. Ang tamang gulang sa pagkuha ng lisensya Non-Professional ay: 18 taong gulang.<br><br>
+		6. Matapos kang lumampas (overtake) at nais mong bumalik sa pinanggalingang linya ng ligtas, kailangan: Tingnan sa ‘rear view mirror’ ang iyong nilagpasan.<br><br>
+		7. Sa isang interseksyon na may STOP sign, dapat kang: Huminto at magpatuloy kung walang panganib.<br><br>
+		8. Ang pagkakaroon ng lisensya ay isang: Karapatan.<br><br>
+		9.  Ang lisensyang Non-Professional ay para lamang sa: Mga pribadong sasakyan.<br><br>
+		10. Ano ang dapat mong ihanda kung malayo ang biyahe? Tama lahat ang nasa itaas.<br><br>
+		11. Kung paparada ng paahon sa may bangketa, dapat mong ipihit ang gulong: Papalayo sa bangketa.<br><br>
+		12. Ang sasakyan ay nakaparada (parked) kung: Nakatigil ng matagal at patay ang makina.<br><br>
+		13. Ano ang kahulugan ng patay-sinding kulay pulang ilaw trapiko? Huminto at magpatuloy kung ligtas.<br><br>
+		14. Anong dapat gawin bago lumiko sa kanan o kaliwa? Magbigay ng hudyat o senyas na hindi kukulangin sa 30 meters.<br><br>
+		15. Sa paglipat-lipat ng linya, dapat sumenyas, tingnan ang rear view mirror at: Tingnan kung may parating na sasakyan.<br><br>
+		16. Sa may highway na may dalawang guhit, maaari kang lumusot (overtake) kung sa iyong panig ay may: Tuloy-tuloy na puting guhit.<br><br>
+		17. Ang hindi pagsunod sa ilaw trapiko ay: Maaaring masangkot sa iyo ang aksidente.<br><br>
+		18. Mapanganib ang palikong kaliwa kaysa sa kanan sapagkat: Mabilis ang sasakyang galing sa kaliwa.<br><br>
+		19. Ang pinakaligtas sa ultimatum kahit ikaw ang may karapatan sa daan ay: Huwag ipilit ang karapatan.<br><br>
+		20. Sa mga rotonda, alin ang may karapatan sa daan? Ang sasakyang nasa paligid ng rotonda.<br><br>
+		21. Hindi dapat lumusot (overtake) sa paanan ng tulay sapagkat: Hindi nakikita ang kasalubong na sasakyan.<br><br>
+		22. Ano ang kahulugan ng patay-sinding dilaw na ilaw trapiko? Magmarahan at magpatuloy kung walang panganib.<br><br>
+		23. Ano ang kahulugan ng tuloy-tuloy na guhit na kulay dilaw? Bawal lumusot.<br><br>
+		24. Ayon sa batas, hindi ka maaaring, magmaneho ng matulin maliban kung: Tama lahat ang sagot.<br><br>
+		25. Ang isang may lisensya ay maaaring magmaneho nang: Sasakyang nakasaad sa lisensya.<br><br>
+		26. Kung ang nakasalubong mo ay may nakakasilaw na ilaw, ano ang dapat mong gawin? Tumingin ng bahagya sa gawing kanan ng kalsada.<br><br>
+		27. Kung parating ka sa isang kurbada, ano ang dapat mong gawin? Magmarahan/bagalan ang takbo bago dumating sa kurbada.<br><br>
+		28. Ano ang kahulugan ng senyas trapikong kulay pula na tatsulok ang hugis: Nagbibigay babala.<br><br>
+		29. Ano ang kahulugan ng senyas trapiko na kulay asul at puti na parihaba o parisukat ang hugis? Nag-uutos ng direksyon.<br><br>
+		30. Ano ang kahulugan ng senyas trapiko na kulay pula na pabilog, octagon o baliktad na tatsulok? Nagtatakda o nagbabawal.<br><br>
+		31. Ano ang kahulugan ng berdeng ilaw trapiko? Senyas upang patakbuhin ang sasakyan.<br><br>
+		32. Ano ang kahulugan ng patay-sinding ilaw na pulang ilaw trapiko? Huminto sandali at ituloy ang pagpapatakbo kung walang sagabal sa daan.<br><br>
+		33. Ano ang kahulugan ng dilaw na signal ng trapiko? Humanda  sa paghinto at malapit ng sumindi ang ilaw na pula.<br><br>
+		34. Ano ang kahulugan ng berdeng signal ng trapiko? Patakbuhin ng tuloy-tuloy ang sasakyan.<br><br>
+		35. Ano ang ibig sabihin ng berdeng arrow signal trapiko? Nagpapahintulot sa mga sasakyan na kumaliwa at kumanan.<br><br>
+		36. Ano ang kahulugan ng dilaw na arrow signal trapiko? Nangangahulugan na ang pulang ‘arrow’ ay malapit ng sumindi.<br><br>
+		37. Mga puting linya sa daan: Naghahati sa mga ‘lanes’ na tumatakbo sa isang direksyon.<br><br>
+		38. Ang dilaw na linyang putol-putol ay palatandaan na: Ipinagbabawal ang paglusot sa kanan o kaliwa.<br><br>
+		39. Ang puting linyang putol-putol ay palatandaan na: Maaaring lumusot sa pakaliwa o pakanan kung walang peligro.<br><br>
+		40. Kailan dapat magdesisyon ang isang drayber? Habang siya ay nagmamaneho.<br><br>
+		41. Ang dalawang dilaw na linya na tuloy-tuloy ay palatandaan na: Peligroso ang lumusot sa pakaliwa.<br><br>
+		42. Kung ang drayber ng sasakyan na nasa unahan mo ay naglabas ng kaliwang kamay at inunat ito, nakatitiyak ka na siya ay: Kakaliwa.<br><br>
+		43. Kailangan magbigay ng senyas kung kakanan o kakaliwa sa darating na interseksyon sa layong: 30.<br><br>
+		44. Kung gusto mong magpalit ng lane sa highways, kailangan magsignal: Sampung segundo bago gawin ito.<br><br>
+		45. Sa naka-motorsiklo na may balak lumiko pakanan, dapat gamitin na senyas ay: Kanang kamay na diretsong nagtuturo pakanan.<br><br>
+		46. Ang kailangang distansya sa pagitan ng sinusundang sasakyan ay: Sinlaki ng sukat ng isang sasakyan.<br><br>
+		47. Saang lugar hindi ka dapat lumusot (overtake)? Tama lahat ang sagot.<br><br>
+		48. Ang paggamit ng huwad na lisensya ay ipinagbabawal at may parusang: Php 500.00 at anim na buwan na hindi makakakuha ng lisensya.<br><br>
+		49. Ano ang dapat gawin kung pinapahinto ng pulis? Huminto at ibigay ang lisensya at ibang papeles ng sasakyan kung hinihingi.<br><br>
+		50. Ang dalawang dilaw na linya na putol-putol ay palatandaan na: Maaaring lumusot ng pakanan o pakaliwa kung walang peligro.</h4>
+	<div data-role="footer" data-position="fixed">
+		<div data-role="navbar">
+			<ul>
+				<li><a href="#home" data-transition="flip">HOME</a>
+			</ul>
+		</div>
+	</div>
+</div>
+
+
+</body>
+</html>
